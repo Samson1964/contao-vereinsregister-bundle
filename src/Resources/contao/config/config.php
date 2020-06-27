@@ -11,7 +11,7 @@
  * @copyright Frank Hoppe 2014
  */
 
-$GLOBALS['BE_MOD']['dsb']['vereinsregister'] = array
+$GLOBALS['BE_MOD']['content']['vereinsregister'] = array
 (
 	'tables'         => array
 	(
