@@ -126,14 +126,15 @@ $GLOBALS['TL_DCA']['tl_vereinsregister'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'                => array('addImage', 'addBefore', 'addSeparation', 'addAfter'), 
+		'__selector__'                => array('addImage', 'addBefore', 'addSeparation', 'addAfter', 'overwriteMeta'), 
 		'default'                     => '{name_legend},name,association;{place_legend:hide},continent,land,region,city;{time_legend:hide},timerange,periodStartDate,periodEndDate,foundingDate,resolutionDate;{info_legend:hide},info;{before_legend:hide},addBefore;{separation_legend:hide},addSeparation;{after_legend:hide},addAfter;{image_legend},addImage;{link_legend:hide},url;{intern_legend:hide},intern;{publish_legend},published'
 	),
 
 	// Subpalettes
 	'subpalettes' => array
 	(
-		'addImage'                    => 'singleSRC,alt,title,size,imagemargin,imageUrl,fullsize,caption,floating',
+		'addImage'                    => 'singleSRC,fullsize,size,floating,overwriteMeta',
+		'overwriteMeta'               => 'alt,imageTitle,imageUrl,caption',
 		'addBefore'                   => 'beforeClubs',
 		'addSeparation'               => 'separationClubs',
 		'addAfter'                    => 'afterClubs,afterCause',
@@ -491,10 +492,51 @@ $GLOBALS['TL_DCA']['tl_vereinsregister'] = array
 		'singleSRC' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['singleSRC'],
-			'exclude'                 => true,
 			'inputType'               => 'fileTree',
-			'eval'                    => array('filesOnly'=>true, 'fieldType'=>'radio', 'mandatory'=>true, 'tl_class'=>'clr'),
-			'sql'                     => "binary(16) NULL",
+			'eval'                    => array
+			(
+				'fieldType'           => 'radio', 
+				'filesOnly'           => true, 
+				'extensions'          => '%contao.image.valid_extensions%', 
+				'mandatory'           => true,
+				'tl_class'            => 'clr'
+			),
+			'sql'                     => "binary(16) NULL"
+		),
+		'size' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['MSC']['imgSize'],
+			'inputType'               => 'imageSize',
+			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
+			'eval'                    => array('rgxp'=>'natural', 'includeBlankOption'=>true, 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50 clr'),
+			'options_callback' => static function ()
+			{
+				return Contao\System::getContainer()->get('contao.image.image_sizes')->getOptionsForUser(Contao\BackendUser::getInstance());
+			},
+			'sql'                     => "varchar(64) NOT NULL default ''"
+		),
+		'fullsize' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['fullsize'],
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class'=>'w50'),
+			'sql'                     => array('type' => 'boolean', 'default' => false)
+		),
+		'floating' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['floating'],
+			'inputType'               => 'radioTable',
+			'options'                 => array('above', 'left', 'right', 'below'),
+			'eval'                    => array('cols'=>4, 'tl_class'=>'w50'),
+			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
+			'sql'                     => "varchar(12) NOT NULL default 'above'"
+		),
+		'overwriteMeta' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['overwriteMeta'],
+			'inputType'               => 'checkbox',
+			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50 clr'),
+			'sql'                     => array('type' => 'boolean', 'default' => false)
 		),
 		'alt' => array
 		(
@@ -505,33 +547,14 @@ $GLOBALS['TL_DCA']['tl_vereinsregister'] = array
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
-		'title' => array
+		'imageTitle' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['title'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['imageTitle'],
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'size' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['size'],
-			'exclude'                 => true,
-			'inputType'               => 'imageSize',
-			'options'                 => $GLOBALS['TL_CROP'],
-			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
-			'eval'                    => array('rgxp'=>'digit', 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(64) NOT NULL default ''"
-		),
-		'imagemargin' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['imagemargin'],
-			'exclude'                 => true,
-			'inputType'               => 'trbl',
-			'options'                 => array('px', '%', 'em', 'rem', 'ex', 'pt', 'pc', 'in', 'cm', 'mm'),
-			'eval'                    => array('includeBlankOption'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(128) NOT NULL default ''"
 		),
 		'imageUrl' => array
 		(
@@ -539,20 +562,8 @@ $GLOBALS['TL_DCA']['tl_vereinsregister'] = array
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>255, 'tl_class'=>'w50 wizard'),
-			'wizard' => array
-			(
-				array('Vereinsregister', 'pagePicker')
-			),
+			'eval'                    => array('rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>255, 'dcaPicker'=>true, 'addWizardClass'=>false, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'fullsize' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['fullsize'],
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class'=>'w50 m12'),
-			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'caption' => array
 		(
@@ -563,17 +574,6 @@ $GLOBALS['TL_DCA']['tl_vereinsregister'] = array
 			'eval'                    => array('maxlength'=>255, 'allowHtml'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
-		'floating' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['floating'],
-			'default'                 => 'above',
-			'exclude'                 => true,
-			'inputType'               => 'radioTable',
-			'options'                 => array('above', 'left', 'right', 'below'),
-			'eval'                    => array('cols'=>4, 'tl_class'=>'w50'),
-			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
-			'sql'                     => "varchar(32) NOT NULL default ''"
-		), 
 		'url' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['url'],

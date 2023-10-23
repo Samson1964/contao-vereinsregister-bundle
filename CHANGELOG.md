@@ -1,5 +1,10 @@
 # DSB-Vereinsregister Changelog
 
+## Version 1.0.3 (2023-10-23)
+
+* Change: tl_vereinsregister Felder alt,title,size,imagemargin,imageUrl,fullsize,caption,floating -> fullsize,size,floating,overwriteMeta
+* Change: Übersetzungen tl_vereinsregister
+
 ## Version 1.0.2 (2020-09-28)
 
 * Funktion pagePicker auskommentiert in Klasse Vereinsregister
