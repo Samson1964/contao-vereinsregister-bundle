@@ -7,9 +7,7 @@
  */
 
 /**
- * Backend-Modul Übersetzungen
+ * Backend-Modul Ãœbersetzungen
  */
-$GLOBALS['TL_LANG']['MOD']['dsb'] = "Deutscher Schachbund"; 
 
-$GLOBALS["TL_LANG"]["MOD"]["vereinsregister"][0] = "Vereinsregister";
-$GLOBALS["TL_LANG"]["MOD"]["vereinsregister"][1] = "DSB-Vereinsregister";
+$GLOBALS['TL_LANG']['MOD']['vereinsregister'] = array('Vereinsregister', 'Vereinsregister');

@@ -1,5 +1,15 @@
 # DSB-Vereinsregister Changelog
 
+## Version 1.1.1 (2023-11-29)
+
+* Add: Abhängigkeit codefog/contao-haste
+* Change: Toggle-Funktion durch Haste-Toggler ersetzt -> tl_vereinsregister, tl_vereinsregister_chairman, tl_vereinsregister_chronik, tl_vereinsregister_members, tl_vereinsregister_namen
+* Change: Im DCA alle Bildfelder und Invisible-Feld umgebaut
+* Add: Abhängigkeit schachbulle/contao-helper-bundle
+* Delete: Klasse Vereinsregister -> nur eine Funktion drin, die vom ContaoHelperBundle übernommen wird
+* Add: Ahängigkeit menatwork/contao-multicolumnwizard-bundle
+* Delete: Sprachdatei tl_module
+
 ## Version 1.1.0 (2023-11-29)
 
 * Change: Bundle für PHP 8 freigegeben

@@ -90,9 +90,16 @@ $GLOBALS['TL_DCA']['tl_vereinsregister_members'] = array
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['toggle'],
-				'icon'                => 'visible.gif',
-				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-				'button_callback'     => array('tl_vereinsregister_members', 'toggleIcon')
+				'attributes'           => 'onclick="Backend.getScrollOffset()"',
+				'haste_ajax_operation' => array
+				(
+					'field'            => 'published',
+					'options'          => array
+					(
+						array('value' => '', 'icon' => 'invisible.svg'),
+						array('value' => '1', 'icon' => 'visible.svg'),
+					),
+				),
 			),
 			'show' => array
 			(
@@ -106,15 +113,15 @@ $GLOBALS['TL_DCA']['tl_vereinsregister_members'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'                => array('addImage', 'protected'),
-		'default'                     => '{chronik_legend},name,fromDate,toDate;{image_legend},addImage;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space;{invisible_legend:hide},invisible,start,stop'
+		'__selector__'                => array('addImage', 'overwriteMeta'),
+		'default'                     => '{chronik_legend},name,fromDate,toDate;{image_legend},addImage;{publish_legend:hide},published'
 	),
 
 	// Subpalettes
 	'subpalettes' => array
 	(
-		'addImage'                    => 'singleSRC,alt,title,size,imagemargin,imageUrl,fullsize,caption,floating',
-		'protected'                   => 'groups'
+		'addImage'                    => 'singleSRC,size,floating,fullsize,overwriteMeta',
+		'overwriteMeta'               => 'alt,imageTitle,imageUrl,caption',
 	),
 
 	// Fields
@@ -198,10 +205,51 @@ $GLOBALS['TL_DCA']['tl_vereinsregister_members'] = array
 		'singleSRC' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['singleSRC'],
-			'exclude'                 => true,
 			'inputType'               => 'fileTree',
-			'eval'                    => array('filesOnly'=>true, 'fieldType'=>'radio', 'mandatory'=>true, 'tl_class'=>'clr'),
-			'sql'                     => "binary(16) NULL",
+			'eval'                    => array
+			(
+				'fieldType'           => 'radio', 
+				'filesOnly'           => true, 
+				'extensions'          => '%contao.image.valid_extensions%', 
+				'mandatory'           => true,
+				'tl_class'            => 'clr'
+			),
+			'sql'                     => "binary(16) NULL"
+		),
+		'size' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['MSC']['imgSize'],
+			'inputType'               => 'imageSize',
+			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
+			'eval'                    => array('rgxp'=>'natural', 'includeBlankOption'=>true, 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50 clr'),
+			'options_callback' => static function ()
+			{
+				return Contao\System::getContainer()->get('contao.image.image_sizes')->getOptionsForUser(Contao\BackendUser::getInstance());
+			},
+			'sql'                     => "varchar(64) NOT NULL default ''"
+		),
+		'floating' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['floating'],
+			'inputType'               => 'radioTable',
+			'options'                 => array('above', 'left', 'right', 'below'),
+			'eval'                    => array('cols'=>4, 'tl_class'=>'w50'),
+			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
+			'sql'                     => "varchar(12) NOT NULL default 'above'"
+		),
+		'fullsize' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['fullsize'],
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class'=>'w50', 'type' => 'boolean'),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'overwriteMeta' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['overwriteMeta'],
+			'inputType'               => 'checkbox',
+			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50 clr', 'type' => 'boolean'),
+			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'alt' => array
 		(
@@ -212,33 +260,14 @@ $GLOBALS['TL_DCA']['tl_vereinsregister_members'] = array
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
-		'title' => array
+		'imageTitle' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['title'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['imageTitle'],
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'size' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['size'],
-			'exclude'                 => true,
-			'inputType'               => 'imageSize',
-			'options'                 => $GLOBALS['TL_CROP'],
-			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
-			'eval'                    => array('rgxp'=>'digit', 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(64) NOT NULL default ''"
-		),
-		'imagemargin' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['imagemargin'],
-			'exclude'                 => true,
-			'inputType'               => 'trbl',
-			'options'                 => array('px', '%', 'em', 'rem', 'ex', 'pt', 'pc', 'in', 'cm', 'mm'),
-			'eval'                    => array('includeBlankOption'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(128) NOT NULL default ''"
 		),
 		'imageUrl' => array
 		(
@@ -246,20 +275,8 @@ $GLOBALS['TL_DCA']['tl_vereinsregister_members'] = array
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>255, 'tl_class'=>'w50 wizard'),
-			'wizard' => array
-			(
-				array('Vereinsregister', 'pagePicker')
-			),
+			'eval'                    => array('rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>255, 'dcaPicker'=>true, 'addWizardClass'=>false, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'fullsize' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['fullsize'],
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class'=>'w50 m12'),
-			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'caption' => array
 		(
@@ -270,84 +287,13 @@ $GLOBALS['TL_DCA']['tl_vereinsregister_members'] = array
 			'eval'                    => array('maxlength'=>255, 'allowHtml'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
-		'floating' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['floating'],
-			'default'                 => 'above',
-			'exclude'                 => true,
-			'inputType'               => 'radioTable',
-			'options'                 => array('above', 'left', 'right', 'below'),
-			'eval'                    => array('cols'=>4, 'tl_class'=>'w50'),
-			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
-			'sql'                     => "varchar(32) NOT NULL default ''"
-		),
-		'protected' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['protected'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('submitOnChange'=>true),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'groups' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['groups'],
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'foreignKey'              => 'tl_member_group.name',
-			'eval'                    => array('mandatory'=>true, 'multiple'=>true),
-			'sql'                     => "blob NULL",
-			'relation'                => array('type'=>'hasMany', 'load'=>'lazy')
-		),
-		'guests' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['guests'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class'=>'w50'),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'cssID' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['cssID'],
-			'exclude'                 => true,
-			'inputType'               => 'text',
-			'eval'                    => array('multiple'=>true, 'size'=>2, 'tl_class'=>'w50 clr'),
-			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'space' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['space'],
-			'exclude'                 => true,
-			'inputType'               => 'text',
-			'eval'                    => array('multiple'=>true, 'size'=>2, 'rgxp'=>'digit', 'nospace'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(64) NOT NULL default ''"
-		),
-		'invisible' => array
+		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['invisible'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
 			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'start' => array
-		(
-			'exclude'                 => true,
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['start'],
-			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'datim', 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
-			'sql'                     => "varchar(10) NOT NULL default ''"
-		),
-		'stop' => array
-		(
-			'exclude'                 => true,
-			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister_members']['stop'],
-			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'datim', 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
-			'sql'                     => "varchar(10) NOT NULL default ''"
 		),
 	)
 );
@@ -376,120 +322,22 @@ class tl_vereinsregister_members extends Backend
 	public function listHistory($arrRow)
 	{
 
-		// Status der Sichtbarkeit für das CSS feststellen
-		$key = $arrRow['invisible'] ? 'unpublished' : 'published';
+		// Status der Sichtbarkeit fÃ¼r das CSS feststellen
+		$key = $arrRow['published'] ? 'published' : 'unpublished';
 
-		$temp = '<div class="cte_type ' . $key . '">Mitglied' . ($arrRow['protected'] ? ' (' . $GLOBALS['TL_LANG']['MSC']['protected'] . ')' : ($arrRow['guests'] ? ' (' . $GLOBALS['TL_LANG']['MSC']['guests'] . ')' : '')) . '</div>';
+		$temp = '<div class="cte_type ' . $key . '">Mitglied</div>';
 
 		$temp .= '<div class="limit_height' . (!$GLOBALS['TL_CONFIG']['doNotCollapse'] ? ' h64' : '') . ' block">';
 		$temp .= '<div class="tl_gray">';
 		if($arrRow['name']) $temp .= $arrRow['name'] . '<br>';
-		if($arrRow['fromDate']) $temp .= '<b>Von:</b> ' . \Schachbulle\ContaoVereinsregisterBundle\Classes\Vereinsregister::getDateString($arrRow['fromDate']) . '<br>';
-		if($arrRow['toDate']) $temp .= '<b>Bis:</b> ' . \Schachbulle\ContaoVereinsregisterBundle\Classes\Vereinsregister::getDateString($arrRow['toDate']);
+		if($arrRow['fromDate']) $temp .= '<b>Von:</b> ' . \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($arrRow['fromDate']) . '<br>';
+		if($arrRow['toDate']) $temp .= '<b>Bis:</b> ' . \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($arrRow['toDate']);
 		return $temp.'</div></div>';
-	}
-
-	/**
-	 * Return the "toggle visibility" button
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @return string
-	 */
-	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
-	{
-		if (strlen(Input::get('tid')))
-		{
-			$this->toggleVisibility(Input::get('tid'), (Input::get('state') == 1));
-			$this->redirect($this->getReferer());
-		}
-
-		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_vereinsregister_members::invisible', 'alexf'))
-		{
-			return '';
-		}
-
-		$href .= '&amp;id='.Input::get('id').'&amp;tid='.$row['id'].'&amp;state='.$row['invisible'];
-
-		if ($row['invisible'])
-		{
-			$icon = 'invisible.gif';
-		}
-
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
-	}
-
-
-	/**
-	 * Toggle the visibility of an element
-	 * @param integer
-	 * @param boolean
-	 */
-	public function toggleVisibility($intId, $blnVisible)
-	{
-		// Check permissions to edit
-		Input::setGet('id', $intId);
-		Input::setGet('act', 'toggle');
-
-		// The onload_callbacks vary depending on the dynamic parent table (see #4894)
-		if (is_array($GLOBALS['TL_DCA']['tl_vereinsregister_members']['config']['onload_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA']['tl_vereinsregister_members']['config']['onload_callback'] as $callback)
-			{
-				if (is_array($callback))
-				{
-					$this->import($callback[0]);
-					$this->$callback[0]->$callback[1]($this);
-				}
-				elseif (is_callable($callback))
-				{
-					$callback($this);
-				}
-			}
-		}
-
-		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_vereinsregister_members::invisible', 'alexf'))
-		{
-			$this->log('Not enough permissions to show/hide content element ID "'.$intId.'"', __METHOD__, TL_ERROR);
-			$this->redirect('contao/main.php?act=error');
-		}
-
-		$objVersions = new Versions('tl_vereinsregister_members', $intId);
-		$objVersions->initialize();
-
-		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_vereinsregister_members']['fields']['invisible']['save_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA']['tl_vereinsregister_members']['fields']['invisible']['save_callback'] as $callback)
-			{
-				if (is_array($callback))
-				{
-					$this->import($callback[0]);
-					$blnVisible = $this->$callback[0]->$callback[1]($blnVisible, $this);
-				}
-				elseif (is_callable($callback))
-				{
-					$blnVisible = $callback($blnVisible, $this);
-				}
-			}
-		}
-
-		// Update the database
-		$this->Database->prepare("UPDATE tl_vereinsregister_members SET tstamp=". time() .", invisible='" . ($blnVisible ? '' : 1) . "' WHERE id=?")
-		               ->execute($intId);
-
-		$objVersions->create();
-		$this->log('A new version of record "tl_vereinsregister_members.id='.$intId.'" has been created'.$this->getParentEntries('tl_vereinsregister_members', $intId), __METHOD__, TL_GENERAL);
 	}
 
 	public function groupFormat($group, $sortingMode, $firstOrderBy, $row, $dc)
 	{
-		return \Schachbulle\ContaoVereinsregisterBundle\Classes\Vereinsregister::getDateString($group);
+		return \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($group);
 	}
 
 }
