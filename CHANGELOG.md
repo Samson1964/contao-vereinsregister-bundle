@@ -1,5 +1,9 @@
 # DSB-Vereinsregister Changelog
 
+## Version 1.1.2 (2023-11-29)
+
+* Fix: Syntaxfehler in composer.json
+
 ## Version 1.1.1 (2023-11-29)
 
 * Add: Abhängigkeit codefog/contao-haste
