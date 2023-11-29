@@ -1,5 +1,9 @@
 # DSB-Vereinsregister Changelog
 
+## Version 1.1.0 (2023-11-29)
+
+* Change: Bundle für PHP 8 freigegeben
+
 ## Version 1.0.3 (2023-10-23)
 
 * Change: tl_vereinsregister Felder alt,title,size,imagemargin,imageUrl,fullsize,caption,floating -> fullsize,size,floating,overwriteMeta
