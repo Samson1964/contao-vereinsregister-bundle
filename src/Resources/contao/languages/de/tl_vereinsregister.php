@@ -34,7 +34,7 @@ $GLOBALS['TL_LANG']['tl_vereinsregister']['separationDate'] = array('Datum der T
 $GLOBALS['TL_LANG']['tl_vereinsregister']['after_legend'] = 'Nachfolger-Vereine';
 $GLOBALS['TL_LANG']['tl_vereinsregister']['addAfter'] = array('Nachfolger-Vereine hinzufügen', 'Hier können Sie ein oder mehrere Nachfolger-Vereine hinzufügen.');
 $GLOBALS['TL_LANG']['tl_vereinsregister']['afterClubs'] = array('Bitte Verein(e) auswählen:', 'Bitte wählen Sie ein oder mehrere Vereine aus.');
-$GLOBALS['TL_LANG']['tl_vereinsregister']['afterCause'] = array('Grund', 'Bitte wählen Sie Grund für die Nachfolge aus.');
+$GLOBALS['TL_LANG']['tl_vereinsregister']['afterCause'] = array('Grund', 'Bitte wählen Sie den Grund für die Nachfolge aus.');
 
 $GLOBALS['TL_LANG']['tl_vereinsregister']['info_legend'] = 'Information';
 $GLOBALS['TL_LANG']['tl_vereinsregister']['info'] = array('Vereinsbeschreibung', 'Geben Sie hier eine kurze Beschreibung des Vereins ein.');
@@ -76,4 +76,15 @@ $GLOBALS['TL_LANG']['tl_vereinsregister']['copy'] = array('Verein kopieren', 'Ve
 $GLOBALS['TL_LANG']['tl_vereinsregister']['delete'] = array('Verein löschen', 'Verein %s löschen');
 $GLOBALS['TL_LANG']['tl_vereinsregister']['toggle'] = array('Verein aktivieren/deaktivieren', 'Verein %s aktivieren/deaktivieren');
 $GLOBALS['TL_LANG']['tl_vereinsregister']['show'] = array('Vereinsdetails anzeigen', 'Details des Vereins %s anzeigen');
-
+
+/**
+ * Optionen für Select-Felder
+ */
+
+$GLOBALS['TL_LANG']['tl_vereinsregister']['afterCause_Options'] = array
+(
+	'1' => 'Aufspaltung/Trennung',
+	'2' => 'Auflösung',
+	'3' => 'Fusion mit anderem/n Verein(en)',
+	'4' => 'Umbenennung'
+);

@@ -1,5 +1,9 @@
 # DSB-Vereinsregister Changelog
 
+## Version 1.1.3 (2025-03-03)
+
+* Fix: An exception occurred while executing a query: SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'afterCause' at row 1 -> Callback durch Sprachvariable ersetzt. default stand auf "text"!
+
 ## Version 1.1.2 (2023-11-29)
 
 * Fix: Syntaxfehler in composer.json

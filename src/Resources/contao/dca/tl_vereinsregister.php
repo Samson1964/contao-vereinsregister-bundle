@@ -464,14 +464,15 @@ $GLOBALS['TL_DCA']['tl_vereinsregister'] = array
 		'afterCause' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_vereinsregister']['afterCause'],
-			'default'                 => 'text',
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_vereinsregister', 'getGrund'),
+			'options'                 => array('1', '2', '3', '4'),
+			'reference'               => &$GLOBALS['TL_LANG']['tl_vereinsregister']['afterCause_Options'],
 			'eval'                    => array
 			(
-				'mandatory'           => true, 
+				'mandatory'           => true,
+				'includeBlankOption'  => true,
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
@@ -666,17 +667,4 @@ class tl_vereinsregister extends Backend
 		return $array;
 	}
 	
-	public function getGrund(DataContainer $dc)
-	{
-		$array = array
-		(
-			''  => '-',
-			'1' => 'Aufspaltung/Trennung',
-			'2' => 'Auflösung',
-			'3' => 'Fusion mit anderem/n Verein(en)',
-			'4' => 'Umbenennung',
-		);
-		return $array;
-	}
-
 }
