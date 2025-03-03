@@ -189,7 +189,7 @@ $GLOBALS['TL_DCA']['tl_vereinsregister_chronik'] = array
 			(
 				'rte'                 => 'tinyMCE',
 				'tl_class'            => 'clr',
-				'mandatory'           => true
+				'mandatory'           => false
 			),
 			'explanation'             => 'insertTags',
 			'sql'                     => "mediumtext NULL"
@@ -302,7 +302,16 @@ $GLOBALS['TL_DCA']['tl_vereinsregister_chronik'] = array
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>false, 'rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>255, 'tl_class'=>'w50'),
+			'eval'                    => array
+			(
+				'dcaPicker'           => true,
+				'mandatory'           => false, 
+				'rgxp'                => 'url', 
+				'decodeEntities'      => true, 
+				'maxlength'           => 255, 
+				'fieldType'           => 'radio', 
+				'tl_class'            => 'w50 wizard'
+			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
 		'published' => array
@@ -326,7 +335,7 @@ $GLOBALS['TL_DCA']['tl_vereinsregister_chronik'] = array
  * @author     Leo Feyer <https://contao.org>
  * @package    News
  */
-class tl_vereinsregister_chronik extends Backend
+class tl_vereinsregister_chronik extends \Backend
 {
 
 	/**
@@ -358,4 +367,5 @@ class tl_vereinsregister_chronik extends Backend
 		return \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($group);
 
 	}
+
 }

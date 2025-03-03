@@ -1,5 +1,10 @@
 # DSB-Vereinsregister Changelog
 
+## Version 1.1.4 (2025-03-03)
+
+* Add: DCA-Picker in tl_vereinsregister_chronik.url
+* Change: tl_vereinsregister_chronik.text kein Pflichtfeld mehr
+
 ## Version 1.1.3 (2025-03-03)
 
 * Fix: An exception occurred while executing a query: SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'afterCause' at row 1 -> Callback durch Sprachvariable ersetzt. default stand auf "text"!
